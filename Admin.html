@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STYLO BUYZ Admin</title>
+
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#f5f5f5;
+color:#111
+}
+
+.head{
+background:#090909;
+color:#fff;
+padding:18px 5%;
+display:flex;
+justify-content:space-between
+}
+
+.wrap{
+padding:25px 5%
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 2fr;
+gap:25px
+}
+
+.box{
+background:#fff;
+padding:22px;
+border:1px solid #eee
+}
+
+input,select,textarea{
+width:100%;
+padding:11px;
+margin:6px 0;
+border:1px solid #ddd;
+box-sizing:border-box
+}
+
+button{
+padding:10px 14px;
+border:0;
+background:#111;
+color:#fff;
+font-weight:700;
+cursor:pointer
+}
+
+.danger{
+background:#b00020
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px
+}
+
+.product,.coupon{
+border-bottom:1px solid #eee;
+padding:14px 0;
+display:flex;
+justify-content:space-between;
+gap:15px
+}
+
+.small{
+font-size:12px;
+color:#666
+}
+
+.tabs{
+display:flex;
+gap:8px;
+margin-bottom:20px;
+flex-wrap:wrap
+}
+
+.order{
+border:1px solid #ddd;
+padding:14px;
+margin:10px 0;
+background:#fff
+}
+
+.actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap
+}
+
+@media(max-width:800px){
+.grid{
+grid-template-columns:1fr
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="head">
+<b>STYLO BUYZ ADMIN</b>
+<span>Product • Order • Offer Manager</span>
+</div>
+
+<div class="wrap">
+
+<div id="login" class="box">
+
+<h2>Admin Login</h2>
+
+<input
+id="pass"
+type="password"
+placeholder="Admin password"
+>
+
+<button onclick="login()">LOGIN</button>
+
+</div>
+
+
+<div id="app" style="display:none">
+
+<div class="tabs">
+
+<button onclick="showTab('products')">
+PRODUCTS
+</button>
+
+<button onclick="showTab('orders')">
+ORDERS
+</button>
+
+<button onclick="showTab('coupons')">
+OFFERS / COUPONS
+</button>
+
+</div>
+
+
+<!-- PRODUCTS -->
+
+<div id="productsTab">
+
+<div class="grid">
+
+<div class="box">
+
+<h2 id="formTitle">
+Add Product
+</h2>
+
+<input
+id="pname"
+placeholder="Product name"
+>
+
+<div class="row">
+
+<input
+id="pprice"
+type="number"
+placeholder="Price"
+>
+
+<input
+id="pstock"
+type="number"
+placeholder="Stock"
+>
+
+</div>
+
+<select id="pcategory">
+
+<option>T-Shirts</option>
+<option>Hoodies</option>
+<option>Bottoms</option>
+<option>Accessories</option>
+
+</select>
+
+
+<select id="pgender">
+
+<option>Unisex</option>
+<option>Men</option>
+<option>Women</option>
+
+</select>
+
+
+<input
+id="psizes"
+placeholder="Sizes: S,M,L,XL"
+>
+
+
+<input
+id="pimage"
+placeholder="Product image URL"
+>
+
+
+<textarea
+id="pdesc"
+placeholder="Description"
+></textarea>
+
+
+<div class="actions">
+
+<button onclick="saveProduct()">
+SAVE PRODUCT
+</button>
+
+<button onclick="clearProductForm()">
+CLEAR
+</button>
+
+</div>
+
+</div>
+
+
+<div class="box">
+
+<h2>Products</h2>
+
+<div id="plist"></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ORDERS -->
+
+<div
+id="ordersTab"
+style="display:none"
+>
+
+<div class="box">
+
+<h2>Orders</h2>
+
+<div id="olist"></div>
+
+</div>
+
+</div>
+
+
+<!-- COUPONS -->
+
+<div
+id="couponsTab"
+style="display:none"
+>
+
+<div class="grid">
+
+<div class="box">
+
+<h2>Add Offer</h2>
+
+<input
+id="ccode"
+placeholder="Coupon code e.g. STYLO20"
+>
+
+<select id="ctype">
+
+<option value="percent">
+Percentage %
+</option>
+
+<option value="flat">
+Flat ₹
+</option>
+
+</select>
+
+<input
+id="cvalue"
+type="number"
+placeholder="Discount value"
+>
+
+<input
+id="cmin"
+type="number"
+placeholder="Minimum order (optional)"
+>
+
+<input
+id="cmax"
+type="number"
+placeholder="Maximum discount (optional)"
+>
+
+<button onclick="addCoupon()">
+ADD COUPON
+</button>
+
+</div>
+
+
+<div class="box">
+
+<h2>Coupons</h2>
+
+<div id="clist"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let pw="";
+
+let editing=null;
+
+
+function login(){
+
+pw=
+document.getElementById("pass").value;
+
+if(!pw)return;
+
+document.getElementById("login")
+.style.display="none";
+
+document.getElementById("app")
+.style.display="block";
+
+loadProducts();
+
+loadOrders();
+
+loadCoupons();
+
+}
+
+
+function api(url,opt={}){
+
+opt.headers={
+...(opt.headers||{}),
+"x-admin-password":pw,
+"Content-Type":"application/json"
+};
+
+return fetch(url,opt).then(async r=>{
+
+let d=await r.json();
+
+if(!r.ok)
+throw Error(d.error||"Error");
+
+return d;
+
+});
+
+}
+
+
+async function loadProducts(){
+
+const p=
+await fetch("/api/products")
+.then(r=>r.json());
+
+document.getElementById("plist")
+.innerHTML=
+
+p.length
+
+?
+
+p.map(x=>`
+
+<div class="product">
+
+<div>
+
+<b>${x.name}</b>
+
+<div class="small">
+
+${x.category}
+•
+${x.gender}
+•
+₹${x.price}
+•
+Stock ${x.stock}
+
+<br>
+
+Sizes:
+${(x.sizes||[]).join(", ")}
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+onclick="editProduct('${x.id}')"
+>
+EDIT
+</button>
+
+<button
+class="danger"
+onclick="delProduct('${x.id}')"
+>
+DELETE
+</button>
+
+</div>
+
+</div>
+
+`).join("")
+
+:
+
+"No products.";
+
+}
+
+
+async function saveProduct(){
+
+const body={
+
+name:
+document.getElementById("pname")
+.value.trim(),
+
+price:
+Number(
+document.getElementById("pprice").value
+),
+
+stock:
+Number(
+document.getElementById("pstock").value
+),
+
+category:
+document.getElementById("pcategory").value,
+
+gender:
+document.getElementById("pgender").value,
+
+sizes:
+document.getElementById("psizes")
+.value
+.split(",")
+.map(x=>x.trim())
+.filter(Boolean),
+
+image:
+document.getElementById("pimage")
+.value.trim(),
+
+description:
+document.getElementById("pdesc")
+.value.trim()
+
+};
+
+
+try{
+
+if(editing){
+
+await api(
+"/api/admin/products/"+editing,
+{
+method:"PUT",
+body:JSON.stringify(body)
+}
+);
+
+alert("Product updated");
+
+}else{
+
+await api(
+"/api/admin/products",
+{
+method:"POST",
+body:JSON.stringify(body)
+}
+);
+
+alert("Product added");
+
+}
+
+clearProductForm();
+
+loadProducts();
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+}
+
+
+async function editProduct(id){
+
+const p=
+await fetch("/api/products")
+.then(r=>r.json());
+
+const x=p.find(a=>a.id===id);
+
+if(!x)return;
+
+editing=id;
+
+document.getElementById("formTitle")
+.textContent="Edit Product";
+
+document.getElementById("pname")
+.value=x.name;
+
+document.getElementById("pprice")
+.value=x.price;
+
+document.getElementById("pstock")
+.value=x.stock;
+
+document.getElementById("pcategory")
+.value=x.category;
+
+document.getElementById("pgender")
+.value=x.gender;
+
+document.getElementById("psizes")
+.value=(x.sizes||[]).join(",");
+
+document.getElementById("pimage")
+.value=x.image||"";
+
+document.getElementById("pdesc")
+.value=x.description||"";
+
+scrollTo(0,0);
+
+}
+
+
+function clearProductForm(){
+
+editing=null;
+
+document.getElementById("formTitle")
+.textContent="Add Product";
+
+[
+"pname",
+"pprice",
+"pstock",
+"psizes",
+"pimage",
+"pdesc"
+].forEach(id=>
+document.getElementById(id).value=""
+);
+
+}
+
+
+async function delProduct(id){
+
+if(!confirm("Delete product?"))
+return;
+
+await api(
+"/api/admin/products/"+id,
+{
+method:"DELETE"
+}
+);
+
+loadProducts();
+
+}
+
+
+async function loadOrders(){
+
+const o=
+await api("/api/admin/orders");
+
+document.getElementById("olist")
+.innerHTML=
+
+o.length
+
+?
+
+[...o]
+.reverse()
+.map(x=>`
+
+<div class="order">
+
+<b>${x.id}</b>
+
+—
+
+<b>${x.status}</b>
+
+—
+
+₹${x.total??x.amount}
+
+<br><br>
+
+<span class="small">
+
+Name:
+${x.customer.name}
+
+<br>
+
+Phone:
+${x.customer.phone}
+
+<br>
+
+Address:
+${x.customer.address},
+${x.customer.city},
+${x.customer.state}
+-
+${x.customer.pincode}
+
+${x.customer.email
+?`<br>Email: ${x.customer.email}`
+:""}
+
+</span>
+
+<br><br>
+
+<span class="small">
+
+${x.items.map(i=>
+i.name+
+" × "+
+i.qty+
+(i.size
+?" ("+i.size+")"
+:"")
+).join(", ")}
+
+</span>
+
+<br><br>
+
+<select
+onchange="setStatus('${x.id}',this.value)"
+>
+
+<option
+${x.status==="NEW"?"selected":""}
+>
+NEW
+</option>
+
+<option
+${x.status==="CONFIRMED"?"selected":""}
+>
+CONFIRMED
+</option>
+
+<option
+${x.status==="PACKED"?"selected":""}
+>
+PACKED
+</option>
+
+<option
+${x.status==="SHIPPED"?"selected":""}
+>
+SHIPPED
+</option>
+
+<option
+${x.status==="DELIVERED"?"selected":""}
+>
+DELIVERED
+</option>
+
+<option
+${x.status==="CANCELLED"?"selected":""}
+>
+CANCELLED
+</option>
+
+<option
+${x.status==="PAID"?"selected":""}
+>
+PAID
+</option>
+
+<option
+${x.status==="COD — Order Placed"?"selected":""}
+>
+COD — Order Placed
+</option>
+
+<option
+${x.status==="PAYMENT_PENDING"?"selected":""}
+>
+PAYMENT_PENDING
+</option>
+
+</select>
+
+</div>
+
+`).join("")
+
+:
+
+"No orders yet.";
+
+}
+
+
+async function setStatus(id,status){
+
+try{
+
+await api(
+"/api/admin/orders/"+id,
+{
+method:"PATCH",
+body:JSON.stringify({status})
+}
+);
+
+loadOrders();
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+}
+
+
+async function loadCoupons(){
+
+const c=
+await fetch("/api/coupons")
+.then(r=>r.json());
+
+document.getElementById("clist")
+.innerHTML=
+
+c.length
+
+?
+
+c.map(x=>`
+
+<div class="coupon">
+
+<div>
+
+<b>${x.code}</b>
+
+<div class="small">
+
+${
+x.type==="percent"
+?x.value+"%":"₹"+x.value
+}
+
+off
+
+•
+
+Min ₹${x.minOrder||0}
+
+${x.maxDiscount
+?" • Max ₹"+x.maxDiscount
+:""}
+
+</div>
+
+</div>
+
+
+<button
+class="danger"
+onclick="delCoupon('${x.id}')"
+>
+DELETE
+</button>
+
+</div>
+
+`).join("")
+
+:
+
+"No coupons.";
+
+}
+
+
+async function addCoupon(){
+
+const body={
+
+code:
+document.getElementById("ccode")
+.value,
+
+type:
+document.getElementById("ctype")
+.value,
+
+value:
+Number(
+document.getElementById("cvalue").value
+),
+
+minOrder:
+Number(
+document.getElementById("cmin").value||0
+),
+
+maxDiscount:
+Number(
+document.getElementById("cmax").value||0
+)
+
+};
+
+
+try{
+
+await api(
+"/api/admin/coupons",
+{
+method:"POST",
+body:JSON.stringify(body)
+}
+);
+
+alert("Coupon added");
+
+[
+"ccode",
+"cvalue",
+"cmin",
+"cmax"
+].forEach(id=>
+document.getElementById(id).value=""
+);
+
+loadCoupons();
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+}
+
+
+async function delCoupon(id){
+
+if(!confirm("Delete coupon?"))
+return;
+
+await api(
+"/api/admin/coupons/"+id,
+{
+method:"DELETE"
+}
+);
+
+loadCoupons();
+
+}
+
+
+function showTab(t){
+
+[
+"products",
+"orders",
+"coupons"
+].forEach(x=>
+
+document.getElementById(
+x+"Tab"
+).style.display=
+x===t?"block":"none"
+
+);
+
+if(t==="orders")
+loadOrders();
+
+if(t==="coupons")
+loadCoupons();
+
+}
+
+</script>
+
+</body>
+</html>
