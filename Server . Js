@@ -1,0 +1,505 @@
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
+
+const app = express();
+const PORT = process.env.PORT || 10000;
+
+// Keep your password in Render Environment Variables.
+// Do NOT put your real password in this code.
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "CHANGE_THIS_IN_RENDER";
+
+app.use(express.json());
+
+const productsFile = path.join(__dirname, "products.json");
+const ordersFile = path.join(__dirname, "orders.json");
+const couponsFile = path.join(__dirname, "coupons.json");
+
+function readFile(file, fallback) {
+  try {
+    if (!fs.existsSync(file)) {
+      fs.writeFileSync(file, JSON.stringify(fallback, null, 2));
+      return fallback;
+    }
+
+    return JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (error) {
+    console.error(error);
+    return fallback;
+  }
+}
+
+function saveFile(file, data) {
+  fs.writeFileSync(file, JSON.stringify(data, null, 2));
+}
+
+function checkAdmin(req, res, next) {
+  const password = req.headers["x-admin-password"];
+
+  if (!password || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({
+      error: "Invalid admin password"
+    });
+  }
+
+  next();
+}
+
+/* =========================
+   PUBLIC PRODUCT API
+========================= */
+
+app.get("/api/products", (req, res) => {
+  const products = readFile(productsFile, []);
+  res.json(products);
+});
+
+/* =========================
+   PUBLIC COUPON API
+========================= */
+
+app.get("/api/coupons", (req, res) => {
+  const coupons = readFile(couponsFile, []);
+
+  const activeCoupons = coupons.filter(
+    coupon => coupon.active !== false
+  );
+
+  res.json(activeCoupons);
+});
+
+/* =========================
+   CREATE ORDER
+========================= */
+
+app.post("/api/orders", (req, res) => {
+  try {
+    const {
+      customer,
+      items,
+      subtotal,
+      discount,
+      coupon,
+      total
+    } = req.body;
+
+    if (
+      !customer ||
+      !customer.name ||
+      !customer.phone ||
+      !customer.address ||
+      !customer.city ||
+      !customer.state ||
+      !customer.pincode
+    ) {
+      return res.status(400).json({
+        error: "Please fill all required customer details."
+      });
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        error: "Your cart is empty."
+      });
+    }
+
+    const products = readFile(productsFile, []);
+
+    const orderItems = [];
+
+    for (const item of items) {
+      const product = products.find(
+        product => product.id === item.id
+      );
+
+      if (!product) {
+        return res.status(400).json({
+          error: "Product not found."
+        });
+      }
+
+      const quantity = Number(item.quantity);
+
+      if (!quantity || quantity < 1) {
+        return res.status(400).json({
+          error: "Invalid quantity."
+        });
+      }
+
+      if (Number(product.stock) < quantity) {
+        return res.status(400).json({
+          error: `${product.name} is out of stock.`
+        });
+      }
+
+      orderItems.push({
+        id: product.id,
+        name: product.name,
+        price: Number(product.price),
+        size: item.size || "Free Size",
+        quantity
+      });
+
+      product.stock =
+        Number(product.stock) - quantity;
+    }
+
+    saveFile(productsFile, products);
+
+    const orders = readFile(ordersFile, []);
+
+    const order = {
+      id:
+        "SB-" +
+        Date.now().toString().slice(-8),
+
+      date: new Date().toISOString(),
+
+      customer,
+
+      items: orderItems,
+
+      subtotal: Number(subtotal) || 0,
+
+      discount: Number(discount) || 0,
+
+      coupon: coupon || "",
+
+      total: Number(total) || 0,
+
+      payment: "WhatsApp / Cash on Delivery",
+
+      status: "NEW"
+    };
+
+    orders.unshift(order);
+
+    saveFile(ordersFile, orders);
+
+    res.json({
+      success: true,
+      order
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      error: "Could not create order."
+    });
+  }
+});
+
+/* =========================
+   ADMIN — PRODUCTS
+========================= */
+
+app.get(
+  "/api/admin/products",
+  checkAdmin,
+  (req, res) => {
+    res.json(
+      readFile(productsFile, [])
+    );
+  }
+);
+
+app.post(
+  "/api/admin/products",
+  checkAdmin,
+  (req, res) => {
+
+    const {
+      name,
+      price,
+      category,
+      gender,
+      sizes,
+      stock,
+      image,
+      description
+    } = req.body;
+
+    if (!name || !price || !category) {
+      return res.status(400).json({
+        error:
+          "Name, price and category are required."
+      });
+    }
+
+    const products =
+      readFile(productsFile, []);
+
+    const product = {
+      id:
+        "p" +
+        Date.now(),
+
+      name: String(name),
+
+      price: Number(price),
+
+      category: String(category),
+
+      gender:
+        gender || "Unisex",
+
+      sizes:
+        Array.isArray(sizes)
+          ? sizes
+          : String(sizes || "Free Size")
+              .split(",")
+              .map(size => size.trim())
+              .filter(Boolean),
+
+      stock:
+        Number(stock) || 0,
+
+      image:
+        String(image || ""),
+
+      description:
+        String(description || "")
+    };
+
+    products.push(product);
+
+    saveFile(
+      productsFile,
+      products
+    );
+
+    res.json({
+      success: true,
+      product
+    });
+  }
+);
+
+/* =========================
+   ADMIN — DELETE PRODUCT
+========================= */
+
+app.delete(
+  "/api/admin/products/:id",
+  checkAdmin,
+  (req, res) => {
+
+    const products =
+      readFile(productsFile, []);
+
+    const updated =
+      products.filter(
+        product =>
+          product.id !== req.params.id
+      );
+
+    saveFile(
+      productsFile,
+      updated
+    );
+
+    res.json({
+      success: true
+    });
+  }
+);
+
+/* =========================
+   ADMIN — ORDERS
+========================= */
+
+app.get(
+  "/api/admin/orders",
+  checkAdmin,
+  (req, res) => {
+
+    res.json(
+      readFile(ordersFile, [])
+    );
+  }
+);
+
+/* =========================
+   ADMIN — UPDATE ORDER
+========================= */
+
+app.patch(
+  "/api/admin/orders/:id",
+  checkAdmin,
+  (req, res) => {
+
+    const orders =
+      readFile(ordersFile, []);
+
+    const order =
+      orders.find(
+        order =>
+          order.id === req.params.id
+      );
+
+    if (!order) {
+      return res.status(404).json({
+        error: "Order not found."
+      });
+    }
+
+    order.status =
+      req.body.status || "NEW";
+
+    saveFile(
+      ordersFile,
+      orders
+    );
+
+    res.json({
+      success: true,
+      order
+    });
+  }
+);
+
+/* =========================
+   ADMIN — COUPONS
+========================= */
+
+app.get(
+  "/api/admin/coupons",
+  checkAdmin,
+  (req, res) => {
+
+    res.json(
+      readFile(couponsFile, [])
+    );
+  }
+);
+
+app.post(
+  "/api/admin/coupons",
+  checkAdmin,
+  (req, res) => {
+
+    const {
+      code,
+      type,
+      value,
+      minOrder,
+      maxDiscount
+    } = req.body;
+
+    if (!code || !type || !value) {
+      return res.status(400).json({
+        error:
+          "Coupon code, type and value are required."
+      });
+    }
+
+    const coupons =
+      readFile(couponsFile, []);
+
+    const coupon = {
+
+      id:
+        "c" +
+        Date.now(),
+
+      code:
+        String(code)
+          .trim()
+          .toUpperCase(),
+
+      type:
+        type === "flat"
+          ? "flat"
+          : "percent",
+
+      value:
+        Number(value),
+
+      minOrder:
+        Number(minOrder) || 0,
+
+      maxDiscount:
+        Number(maxDiscount) || 0,
+
+      active:
+        true
+    };
+
+    coupons.push(coupon);
+
+    saveFile(
+      couponsFile,
+      coupons
+    );
+
+    res.json({
+      success: true,
+      coupon
+    });
+  }
+);
+
+/* =========================
+   ADMIN — DELETE COUPON
+========================= */
+
+app.delete(
+  "/api/admin/coupons/:id",
+  checkAdmin,
+  (req, res) => {
+
+    const coupons =
+      readFile(couponsFile, []);
+
+    const updated =
+      coupons.filter(
+        coupon =>
+          coupon.id !== req.params.id
+      );
+
+    saveFile(
+      couponsFile,
+      updated
+    );
+
+    res.json({
+      success: true
+    });
+  }
+);
+
+/* =========================
+   WEBSITE
+========================= */
+
+app.use(
+  express.static(
+    path.join(__dirname, "public")
+  )
+);
+
+app.get("*", (req, res) => {
+
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "index.html"
+    )
+  );
+});
+
+/* =========================
+   START SERVER
+========================= */
+
+app.listen(
+  PORT,
+  () => {
+    console.log(
+      `STYLO BUYZ running on port ${PORT}`
+    );
+  }
+);
