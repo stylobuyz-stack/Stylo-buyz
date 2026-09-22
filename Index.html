@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STYLO BUYZ</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+color:#111;
+background:#fff
+}
+
+.top{
+background:#111;
+color:#fff;
+text-align:center;
+padding:9px;
+font-size:12px
+}
+
+.nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 5%;
+border-bottom:1px solid #eee;
+position:sticky;
+top:0;
+background:#fff;
+z-index:5
+}
+
+.logo{
+font-size:24px;
+font-weight:900
+}
+
+.nav a{
+margin:0 8px;
+text-decoration:none;
+color:#111;
+font-size:14px
+}
+
+.hero{
+padding:65px 5%;
+background:#f2f2f2
+}
+
+.hero h1{
+font-size:clamp(45px,9vw,90px);
+margin:0
+}
+
+.hero p{
+font-size:18px
+}
+
+.btn{
+background:#111;
+color:#fff;
+border:0;
+padding:13px 18px;
+font-weight:700;
+cursor:pointer
+}
+
+.whatsapp{
+background:#25D366;
+color:#fff
+}
+
+.wrap{
+padding:35px 5%
+}
+
+.cats,.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px
+}
+
+.cat,.card{
+border:1px solid #eee;
+padding:18px;
+background:#fff
+}
+
+.cat{
+min-height:120px;
+display:flex;
+align-items:end;
+font-size:20px;
+font-weight:800;
+cursor:pointer
+}
+
+.grid{
+margin-top:20px
+}
+
+.card img,.ph{
+width:100%;
+aspect-ratio:1/1;
+object-fit:cover;
+background:#eee
+}
+
+.ph{
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:42px;
+font-weight:900;
+color:#bbb
+}
+
+.price{
+font-weight:800;
+font-size:18px;
+margin:8px 0
+}
+
+.card button{
+width:100%
+}
+
+.features{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin:35px 0
+}
+
+.feature{
+padding:25px;
+background:#f5f5f5
+}
+
+.offer{
+background:#111;
+color:#fff;
+padding:25px;
+text-align:center;
+margin:30px 0
+}
+
+.search{
+width:100%;
+padding:14px;
+border:1px solid #ddd;
+margin:10px 0 20px
+}
+
+.cart{
+position:fixed;
+right:20px;
+bottom:20px;
+border-radius:30px;
+padding:15px 20px;
+background:#111;
+color:#fff;
+border:0;
+z-index:10
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:#0008;
+display:none;
+align-items:center;
+justify-content:center;
+z-index:20
+}
+
+.modalbox{
+background:#fff;
+padding:24px;
+width:min(600px,94%);
+max-height:90vh;
+overflow:auto
+}
+
+.modalbox input,
+.modalbox textarea,
+.modalbox select{
+width:100%;
+padding:12px;
+margin:6px 0;
+border:1px solid #ddd
+}
+
+.line{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #eee;
+gap:10px
+}
+
+.couponrow{
+display:flex;
+gap:8px
+}
+
+.couponrow input{
+flex:1
+}
+
+.success{
+padding:20px;
+background:#f2f2f2
+}
+
+.muted{
+color:#666;
+font-size:13px
+}
+
+.close{
+background:#fff;
+color:#111;
+border:1px solid #111
+}
+
+@media(max-width:800px){
+
+.cats,.grid{
+grid-template-columns:repeat(2,1fr)
+}
+
+.features{
+grid-template-columns:1fr
+}
+
+.nav a{
+display:none
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+FREE SHIPPING • EASY RETURNS • CASH ON DELIVERY
+</div>
+
+<div class="nav">
+
+<div class="logo">
+STYLO BUYZ
+</div>
+
+<div>
+<a href="#shop">Shop</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+</div>
+
+</div>
+
+<section class="hero">
+
+<h1>STYLO BUYZ</h1>
+
+<p>
+Modern streetwear. Everyday essentials. Accessories.
+</p>
+
+<a class="btn" href="#shop">
+SHOP NOW
+</a>
+
+</section>
+
+<div class="wrap">
+
+<h2>Shop by category</h2>
+
+<div class="cats">
+
+<div class="cat" onclick="setFilter('Men')">
+MEN
+</div>
+
+<div class="cat" onclick="setFilter('Women')">
+WOMEN
+</div>
+
+<div class="cat" onclick="setFilter('T-Shirts')">
+T-SHIRTS
+</div>
+
+<div class="cat" onclick="setFilter('Accessories')">
+ACCESSORIES
+</div>
+
+</div>
+
+
+<div id="shop">
+
+<h2>Products</h2>
+
+<input
+class="search"
+id="search"
+placeholder="Search products..."
+oninput="render()"
+>
+
+<div class="grid" id="products"></div>
+
+</div>
+
+
+<div class="offer">
+
+<h2>GET 10% OFF</h2>
+
+<p>
+Use coupon <b>STYLO10</b> on orders of ₹999+
+</p>
+
+</div>
+
+
+<div class="features">
+
+<div class="feature">
+<b>WhatsApp Ordering</b>
+<p>
+Place your order directly through WhatsApp.
+</p>
+</div>
+
+<div class="feature">
+<b>Cash on Delivery</b>
+<p>
+Pay when your order arrives.
+</p>
+</div>
+
+<div class="feature">
+<b>Accessories</b>
+<p>
+Complete your look with caps and bags.
+</p>
+</div>
+
+</div>
+
+
+<div id="about">
+
+<h2>About STYLO BUYZ</h2>
+
+<p>
+Streetwear made for everyday style.
+</p>
+
+</div>
+
+
+<div id="contact">
+
+<h2>Contact</h2>
+
+<p>
+For order help, contact STYLO BUYZ on WhatsApp.
+</p>
+
+<a
+class="btn whatsapp"
+href="https://wa.me/919220105150"
+target="_blank"
+>
+CHAT ON WHATSAPP
+</a>
+
+</div>
+
+</div>
+
+
+<button class="cart" onclick="openCart()">
+
+🛒 CART
+(<span id="count">0</span>)
+
+</button>
+
+
+<!-- CART -->
+
+<div class="modal" id="cartModal">
+
+<div class="modalbox">
+
+<h2>Your Cart</h2>
+
+<div id="cartItems"></div>
+
+<div class="line">
+
+<b>Total</b>
+
+<b id="cartTotal">
+₹0
+</b>
+
+</div>
+
+<button
+class="btn"
+onclick="checkout()"
+>
+CHECKOUT
+</button>
+
+<button
+class="close"
+onclick="closeModal()"
+>
+CLOSE
+</button>
+
+</div>
+
+</div>
+
+
+<!-- CHECKOUT -->
+
+<div class="modal" id="checkoutModal">
+
+<div class="modalbox">
+
+<h2>Checkout</h2>
+
+<div id="checkoutItems"></div>
+
+
+<input
+id="custname"
+placeholder="Full name *"
+>
+
+
+<input
+id="custphone"
+placeholder="Mobile number *"
+inputmode="numeric"
+>
+
+
+<input
+id="custemail"
+placeholder="Email (optional)"
+type="email"
+>
+
+
+<textarea
+id="address"
+placeholder="Full delivery address *"
+></textarea>
+
+
+<input
+id="city"
+placeholder="City *"
+>
+
+
+<input
+id="state"
+placeholder="State *"
+>
+
+
+<input
+id="pincode"
+placeholder="Pincode *"
+inputmode="numeric"
+>
+
+
+<div class="couponrow">
+
+<input
+id="coupon"
+placeholder="Coupon code"
+>
+
+<button
+onclick="applyCoupon()"
+>
+APPLY
+</button>
+
+</div>
+
+
+<div
+id="couponMsg"
+class="muted"
+></div>
+
+
+<div class="line">
+
+<span>Subtotal</span>
+
+<b id="subtotal">
+₹0
+</b>
+
+</div>
+
+
+<div class="line">
+
+<span>Discount</span>
+
+<b id="discount">
+₹0
+</b>
+
+</div>
+
+
+<div class="line">
+
+<span>Total</span>
+
+<b id="total">
+₹0
+</b>
+
+</div>
+
+
+<button
+class="btn whatsapp"
+style="width:100%;margin-top:15px"
+onclick="placeOrder()"
+>
+💬 ORDER ON WHATSAPP
+</button>
+
+
+<button
+class="close"
+style="margin-top:8px"
+onclick="closeModal()"
+>
+CANCEL
+</button>
+
+
+<div id="result"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let products=[];
+
+let cart=JSON.parse(
+localStorage.getItem("styloCart")||"[]"
+);
+
+let filter="";
+
+let couponCode="";
+
+let couponData={
+discount:0
+};
+
+
+/* LOAD PRODUCTS */
+
+async function init(){
+
+try{
+
+products=await fetch("/api/products")
+.then(r=>r.json());
+
+render();
+
+updateCount();
+
+}catch(e){
+
+document.getElementById("products")
+.innerHTML=
+"<p>Unable to load products.</p>";
+
+}
+
+}
+
+
+/* FILTER */
+
+function setFilter(x){
+
+filter=x;
+
+render();
+
+location.hash="shop";
+
+}
+
+
+/* SAVE CART */
+
+function save(){
+
+localStorage.setItem(
+"styloCart",
+JSON.stringify(cart)
+);
+
+updateCount();
+
+}
+
+
+/* CART COUNT */
+
+function updateCount(){
+
+document.getElementById("count")
+.textContent=
+cart.reduce(
+(a,x)=>a+x.qty,
+0
+);
+
+}
+
+
+/* PRODUCTS */
+
+function render(){
+
+const q=
+(
+document.getElementById("search")
+?.value||""
+).toLowerCase();
+
+
+let list=products.filter(p=>
+
+(
+!filter||
+p.gender===filter||
+p.category===filter
+)
+
+&&
+
+p.name
+.toLowerCase()
+.includes(q)
+
+);
+
+
+document.getElementById("products")
+.innerHTML=
+
+list.map(p=>`
+
+<div class="card">
+
+${
+p.image
+
+?
+
+`<img
+src="${p.image}"
+alt="${p.name}"
+>`
+
+:
+
+`<div class="ph">
+SB
+</div>`
+}
+
+<h3>
+${p.name}
+</h3>
+
+<div class="muted">
+${p.gender} • Stock ${p.stock}
+</div>
+
+<div class="price">
+₹${p.price}
+</div>
+
+<button
+class="btn"
+onclick="add('${p.id}')"
+${p.stock<1?"disabled":""}
+>
+
+${
+p.stock<1
+?"OUT OF STOCK"
+:"ADD TO CART"
+}
+
+</button>
+
+</div>
+
+`).join("")
+
+||
+
+"<p>No products found.</p>";
+
+}
+
+
+/* ADD TO CART */
+
+function add(id){
+
+const p=
+products.find(x=>x.id===id);
+
+if(!p||p.stock<1){
+
+return alert("Out of stock");
+
+}
+
+
+let x=
+cart.find(a=>a.id===id);
+
+
+if(x){
+
+if(x.qty>=p.stock){
+
+return alert(
+"Maximum available stock reached."
+);
+
+}
+
+x.qty++;
+
+}else{
+
+cart.push({
+
+id:id,
+
+qty:1,
+
+size:p.sizes?.[0]||""
+
+});
+
+}
+
+
+save();
+
+alert("Added to cart");
+
+}
+
+
+/* CART */
+
+function openCart(){
+
+document.getElementById("cartModal")
+.style.display="flex";
+
+drawCart();
+
+}
+
+
+function closeModal(){
+
+document
+.querySelectorAll(".modal")
+.forEach(x=>
+x.style.display="none"
+);
+
+}
+
+
+function drawCart(){
+
+document.getElementById("cartItems")
+.innerHTML=
+
+cart.map(x=>{
+
+let p=
+products.find(y=>y.id===x.id);
+
+if(!p)return "";
+
+
+return `
+
+<div class="line">
+
+<span>
+
+<b>${p.name}</b>
+
+<br>
+
+<small>
+
+Size:
+
+<select
+onchange="setSize('${x.id}',this.value)"
+>
+
+${
+p.sizes.map(s=>
+
+`<option
+${s===x.size?"selected":""}
+>
+${s}
+</option>`
+
+).join("")
+}
+
+</select>
+
+<br>
+
+Qty:
+
+<button
+onclick="change('${x.id}',-1)"
+>
+−
+</button>
+
+${x.qty}
+
+<button
+onclick="change('${x.id}',1)"
+>
++
+</button>
+
+</small>
+
+</span>
+
+
+<b>
+
+₹${p.price*x.qty}
+
+<br>
+
+<button
+onclick="removeItem('${x.id}')"
+>
+Remove
+</button>
+
+</b>
+
+</div>
+
+`;
+
+}).join("")
+
+||
+
+"<p>Your cart is empty.</p>";
+
+
+document.getElementById("cartTotal")
+.textContent=
+"₹"+
+cart.reduce((s,x)=>{
+
+let p=
+products.find(y=>y.id===x.id);
+
+return s+
+(p?p.price*x.qty:0);
+
+},0);
+
+}
+
+
+/* SIZE */
+
+function setSize(id,size){
+
+let x=
+cart.find(a=>a.id===id);
+
+if(x){
+
+x.size=size;
+
+save();
+
+}
+
+}
+
+
+/* QUANTITY */
+
+function change(id,d){
+
+let x=
+cart.find(a=>a.id===id);
+
+let p=
+products.find(y=>y.id===id);
+
+if(!x)return;
+
+
+x.qty+=d;
+
+
+if(x.qty<1){
+
+cart=
+cart.filter(
+a=>a.id!==id
+);
+
+}
+
+
+if(p&&x.qty>p.stock){
+
+x.qty=p.stock;
+
+}
+
+
+save();
+
+drawCart();
+
+}
+
+
+/* REMOVE */
+
+function removeItem(id){
+
+cart=
+cart.filter(
+x=>x.id!==id
+);
+
+save();
+
+drawCart();
+
+}
+
+
+/* CHECKOUT */
+
+function checkout(){
+
+if(!cart.length){
+
+return alert(
+"Your cart is empty"
+);
+
+}
+
+closeModal();
+
+document.getElementById(
+"checkoutModal"
+).style.display="flex";
+
+drawCheckout();
+
+}
+
+
+/* SUBTOTAL */
+
+function getSubtotal(){
+
+return cart.reduce((s,x)=>{
+
+let p=
+products.find(y=>y.id===x.id);
+
+return s+
+(p?p.price*x.qty:0);
+
+},0);
+
+}
+
+
+/* COUPON */
+
+async function applyCoupon(){
+
+const code=
+document.getElementById("coupon")
+.value
+.trim()
+.toUpperCase();
+
+
+if(!code){
+
+couponCode="";
+
+couponData={
+discount:0
+};
+
+document.getElementById("couponMsg")
+.textContent="";
+
+drawCheckout();
+
+return;
+
+}
+
+
+try{
+
+const coupons=
+await fetch("/api/coupons")
+.then(r=>r.json());
+
+
+const x=
+coupons.find(
+a=>a.code===code&&a.active
+);
+
+
+if(!x){
+
+throw Error(
+"Invalid coupon"
+);
+
+}
+
+
+const subtotal=
+getSubtotal();
+
+
+if(
+subtotal<
+(x.minOrder||0)
+){
+
+throw Error(
+`Minimum order ₹${x.minOrder}`
+);
+
+}
+
+
+let d=
+x.type==="percent"
+
+?
+
+subtotal*x.value/100
+
+:
+
+x.value;
+
+
+if(x.maxDiscount){
+
+d=
+Math.min(
+d,
+x.maxDiscount
+);
+
+}
+
+
+couponCode=code;
+
+
+couponData={
+discount:
+Math.min(
+Math.round(d),
+subtotal
+),
+
+code:code
+};
+
+
+document.getElementById(
+"couponMsg"
+).textContent=
+`Coupon applied: ${code}`;
+
+
+drawCheckout();
+
+
+}catch(e){
+
+couponCode="";
+
+couponData={
+discount:0
+};
+
+document.getElementById(
+"couponMsg"
+).textContent=
+e.message;
+
+drawCheckout();
+
+}
+
+}
+
+
+/* CHECKOUT DISPLAY */
+
+function drawCheckout(){
+
+let sub=
+getSubtotal();
+
+let d=
+couponData.discount||0;
+
+
+document.getElementById(
+"checkoutItems"
+).innerHTML=
+
+cart.map(x=>{
+
+let p=
+products.find(y=>y.id===x.id);
+
+return `
+
+<div class="line">
+
+<span>
+${p.name}
+× ${x.qty}
+(${x.size})
+</span>
+
+<b>
+₹${p.price*x.qty}
+</b>
+
+</div>
+
+`;
+
+}).join("");
+
+
+document.getElementById(
+"subtotal"
+).textContent=
+"₹"+sub;
+
+
+document.getElementById(
+"discount"
+).textContent=
+"− ₹"+d;
+
+
+document.getElementById(
+"total"
+).textContent=
+"₹"+(sub-d);
+
+}
+
+
+/* WHATSAPP ORDER */
+
+function placeOrder(){
+
+const customer={
+
+name:
+document.getElementById("custname")
+.value.trim(),
+
+phone:
+document.getElementById("custphone")
+.value.trim(),
+
+email:
+document.getElementById("custemail")
+.value.trim(),
+
+address:
+document.getElementById("address")
+.value.trim(),
+
+city:
+document.getElementById("city")
+.value.trim(),
+
+state:
+document.getElementById("state")
+.value.trim(),
+
+pincode:
+document.getElementById("pincode")
+.value.trim()
+
+};
+
+
+if(
+!customer.name||
+!customer.phone||
+!customer.address||
+!customer.city||
+!customer.state||
+!customer.pincode
+){
+
+return alert(
+"Please fill all required customer details."
+);
+
+}
+
+
+if(
+!/^[6-9]\d{9}$/.test(
+customer.phone
+)
+){
+
+return alert(
+"Enter a valid 10-digit Indian mobile number."
+);
+
+}
+
+
+if(
+!/^\d{6}$/.test(
+customer.pincode
+)
+){
+
+return alert(
+"Enter a valid 6-digit pincode."
+);
+
+}
+
+
+let subtotal=
+getSubtotal();
+
+let discount=
+couponData.discount||0;
+
+let total=
+subtotal-discount;
+
+
+/* CREATE WHATSAPP MESSAGE */
+
+let message=
+"STYLO BUYZ ORDER\n\n";
+
+message+=
+"Customer Details\n";
+
+message+=
+"Name: "+
+customer.name+
+"\n";
+
+message+=
+"Phone: "+
+customer.phone+
+"\n";
+
+if(customer.email){
+
+message+=
+"Email: "+
+customer.email+
+"\n";
+
+}
+
+message+=
+"Address: "+
+customer.address+
+"\n";
+
+message+=
+"City: "+
+customer.city+
+"\n";
+
+message+=
+"State: "+
+customer.state+
+"\n";
+
+message+=
+"Pincode: "+
+customer.pincode+
+"\n\n";
+
+
+message+=
+"ORDER ITEMS\n";
+
+
+cart.forEach(x=>{
+
+let p=
+products.find(y=>y.id===x.id);
+
+if(!p)return;
+
+message+=
+"- "+
+p.name+
+" | Size: "+
+x.size+
+" | Qty: "+
+x.qty+
+" | ₹"+
+(p.price*x.qty)+
+"\n";
+
+});
+
+
+message+=
+"\nSubtotal: ₹"+
+subtotal+
+"\n";
+
+message+=
+"Discount: ₹"+
+discount+
+"\n";
+
+if(couponCode){
+
+message+=
+"Coupon: "+
+couponCode+
+"\n";
+
+}
+
+message+=
+"TOTAL: ₹"+
+total+
+"\n\n";
+
+message+=
+"Payment: Cash on Delivery / WhatsApp confirmation";
+
+
+/* OPEN WHATSAPP */
+
+const whatsappUrl=
+"https://wa.me/919220105150?text="+
+encodeURIComponent(message);
+
+
+window.open(
+whatsappUrl,
+"_blank"
+);
+
+
+/* CLEAR CART */
+
+cart=[];
+
+save();
+
+
+document.getElementById("result")
+.innerHTML=
+
+`
+
+<div class="success">
+
+<h3>
+Order message ready! 🎉
+</h3>
+
+<p>
+WhatsApp has been opened with your complete order details.
+</p>
+
+<p>
+Please send the message to complete your order.
+</p>
+
+</div>
+
+`;
+
+}
+
+
+init();
+
+</script>
+
+</body>
+</html>
