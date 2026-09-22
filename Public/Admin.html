@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>STYLO BUYZ Admin</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f5f5;
+  color: #111;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.box {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+button {
+  border: none;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.primary {
+  background: #111;
+  color: white;
+}
+
+.danger {
+  background: #d93025;
+  color: white;
+}
+
+.success {
+  background: #20a05a;
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  background: #ddd;
+}
+
+.tabs button.active {
+  background: #111;
+  color: white;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.product-card,
+.order-card,
+.coupon-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.product-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  float: right;
+}
+
+.small {
+  color: #777;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.order-items {
+  margin: 10px 0;
+  line-height: 24px;
+}
+
+@media(max-width:650px) {
+
+  .container {
+    padding: 10px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>STYLO BUYZ</h1>
+
+  <p class="small">
+    Store Administration
+  </p>
+
+
+  <!-- LOGIN -->
+
+  <div id="loginBox" class="box">
+
+    <h2>Admin Login</h2>
+
+    <label>
+      Admin Password
+
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+      >
+
+    </label>
+
+    <button
+      class="primary"
+      onclick="login()"
+    >
+      Login
+    </button>
+
+    <p id="loginMessage"></p>
+
+  </div>
+
+
+  <!-- ADMIN -->
+
+  <div id="adminArea" class="hidden">
+
+    <div class="tabs">
+
+      <button
+        id="productsTab"
+        class="active"
+        onclick="showSection('productsSection')"
+      >
+        Products
+      </button>
+
+      <button
+        onclick="showSection('ordersSection')"
+      >
+        Orders
+      </button>
+
+      <button
+        onclick="showSection('couponsSection')"
+      >
+        Coupons
+      </button>
+
+      <button
+        onclick="logout()"
+      >
+        Logout
+      </button>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <section
+      id="productsSection"
+      class="box"
+    >
+
+      <h2>Products</h2>
+
+      <div class="form-grid">
+
+        <label>
+          Product Name
+
+          <input
+            id="productName"
+            placeholder="Oversized T-Shirt"
+          >
+
+        </label>
+
+
+        <label>
+          Price
+
+          <input
+            id="productPrice"
+            type="number"
+            min="0"
+            placeholder="799"
+          >
+
+        </label>
+
+
+        <label>
+          Stock
+
+          <input
+            id="productStock"
+            type="number"
+            min="0"
+            placeholder="20"
+          >
+
+        </label>
+
+
+        <label>
+          Category
+
+          <input
+            id="productCategory"
+            placeholder="T-Shirts"
+          >
+
+        </label>
+
+
+        <label>
+          Gender
+
+          <select id="productGender">
+
+            <option value="Unisex">
+              Unisex
+            </option>
+
+            <option value="Men">
+              Men
+            </option>
+
+            <option value="Women">
+              Women
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+          Sizes
+
+          <input
+            id="productSizes"
+            placeholder="S,M,L,XL"
+          >
+
+        </label>
+
+
+        <label>
+          Image URL
+
+          <input
+            id="productImage"
+            type="url"
+            placeholder="https://..."
+          >
+
+        </label>
+
+
+        <label>
+          Description
+
+          <input
+            id="productDescription"
+            placeholder="Premium cotton t-shirt"
+          >
+
+        </label>
+
+      </div>
+
+
+      <button
+        class="primary"
+        onclick="addProduct()"
+      >
+        + Add Product
+      </button>
+
+
+      <h3>Current Products</h3>
+
+      <div id="productList">
+        Loading...
+      </div>
+
+    </section>
+
+
+    <!-- ORDERS -->
+
+    <section
+      id="ordersSection"
+      class="box hidden"
+    >
+
+      <h2>Orders</h2>
+
+      <div id="orderList">
+        Loading...
+      </div>
+
+    </section>
+
+
+    <!-- COUPONS -->
+
+    <section
+      id="couponsSection"
+      class="box hidden"
+    >
+
+      <h2>Coupons</h2>
+
+      <div class="form-grid">
+
+        <label>
+          Coupon Code
+
+          <input
+            id="couponCode"
+            placeholder="STYLO20"
+          >
+
+        </label>
+
+
+        <label>
+          Type
+
+          <select id="couponType">
+
+            <option value="percent">
+              Percentage
+            </option>
+
+            <option value="flat">
+              Flat Amount
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+          Discount Value
+
+          <input
+            id="couponValue"
+            type="number"
+            min="1"
+            placeholder="10"
+          >
+
+        </label>
+
+
+        <label>
+          Minimum Order
+
+          <input
+            id="couponMin"
+            type="number"
+            min="0"
+            placeholder="999"
+          >
+
+        </label>
+
+
+        <label>
+          Maximum Discount
+
+          <input
+            id="couponMax"
+            type="number"
+            min="0"
+            placeholder="300"
+          >
+
+        </label>
+
+      </div>
+
+
+      <button
+        class="primary"
+        onclick="addCoupon()"
+      >
+        + Add Coupon
+      </button>
+
+
+      <div id="couponList">
+        Loading...
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let adminPassword =
+  sessionStorage.getItem("styloAdminPassword") || "";
+
+
+/* API */
+
+async function api(
+  url,
+  options = {}
+) {
+
+  const headers =
+    options.headers || {};
+
+  headers["x-admin-password"] =
+    adminPassword;
+
+  headers["Content-Type"] =
+    "application/json";
+
+
+  return fetch(
+    url,
+    {
+      ...options,
+      headers
+    }
+  );
+
+}
+
+
+/* LOGIN */
+
+async function login() {
+
+  const password =
+    document
+      .getElementById("password")
+      .value;
+
+
+  if (!password) {
+
+    document
+      .getElementById("loginMessage")
+      .textContent =
+        "Enter your password.";
+
+    return;
+
+  }
+
+
+  adminPassword = password;
+
+
+  try {
+
+    const response =
+      await api(
+        "/api/admin/orders"
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Invalid password"
+      );
+
+    }
+
+
+    sessionStorage.setItem(
+      "styloAdminPassword",
+      adminPassword
+    );
+
+
+    document
+      .getElementById("loginBox")
+      .classList.add("hidden");
+
+
+    document
+      .getElementById("adminArea")
+      .classList.remove("hidden");
+
+
+    loadProducts();
+
+    loadOrders();
+
+    loadCoupons();
+
+
+  } catch(error) {
+
+    adminPassword = "";
+
+    document
+      .getElementById("loginMessage")
+      .textContent =
+        "Invalid admin password.";
+
+  }
+
+}
+
+
+/* LOGOUT */
+
+function logout() {
+
+  sessionStorage.removeItem(
+    "styloAdminPassword"
+  );
+
+  location.reload();
+
+}
+
+
+/* SECTIONS */
+
+function showSection(id) {
+
+  const sections = [
+    "productsSection",
+    "ordersSection",
+    "couponsSection"
+  ];
+
+
+  sections.forEach(section => {
+
+    document
+      .getElementById(section)
+      .classList.toggle(
+        "hidden",
+        section !== id
+      );
+
+  });
+
+}
+
+
+/* PRODUCTS */
+
+async function loadProducts() {
+
+  try {
+
+    const response =
+      await api(
+        "/api/products"
+      );
+
+
+    const products =
+      await response.json();
+
+
+    const list =
+      document
+        .getElementById("productList");
+
+
+    if (!products.length) {
+
+      list.innerHTML =
+        "<p>No products.</p>";
+
+      return;
+
+    }
+
+
+    list.innerHTML =
+      products
+        .map(product => `
+
+          <div class="product-card">
+
+            ${
+              product.image
+                ? `
+                  <img
+                    src="${escapeHtml(product.image)}"
+                    alt=""
+                  >
+                `
+                : ""
+            }
+
+            <strong>
+              ${escapeHtml(product.name)}
+            </strong>
+
+            <div class="small">
+              ₹${Number(product.price).toLocaleString("en-IN")}
+              · Stock: ${product.stock}
+              · ${escapeHtml(product.category)}
+            </div>
+
+            <div class="small">
+              Sizes:
+              ${escapeHtml(
+                (product.sizes || []).join(", ")
+              )}
+            </div>
+
+            <br>
+
+            <button
+              class="danger"
+              onclick="deleteProduct('${product.id}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        `)
+        .join("");
+
+
+  } catch(error) {
+
+    document
+      .getElementById("productList")
+      .textContent =
+        "Could not load products.";
+
+  }
+
+}
+
+
+/* ADD PRODUCT */
+
+async function addProduct() {
+
+  const name =
+    document
+      .getElementById("productName")
+      .value
+      .trim();
+
+
+  const price =
+    Number(
+      document
+        .getElementById("productPrice")
+        .value
+    );
+
+
+  const stock =
+    Number(
+      document
+        .getElementById("productStock")
+        .value
+    );
+
+
+  const category =
+    document
+      .getElementById("productCategory")
+      .value
+      .trim();
+
+
+  const gender =
+    document
+      .getElementById("productGender")
+      .value;
+
+
+  const sizes =
+    document
+      .getElementById("productSizes")
+      .value
+      .split(",")
+      .map(x => x.trim())
+      .filter(Boolean);
+
+
+  const image =
+    document
+      .getElementById("productImage")
+      .value
+      .trim();
+
+
+  const description =
+    document
+      .getElementById("productDescription")
+      .value
+      .trim();
+
+
+  if (
+    !name ||
+    !price ||
+    !category
+  ) {
+
+    alert(
+      "Product name, price and category are required."
+    );
+
+    return;
+
+  }
+
+
+  const response =
+    await api(
+      "/api/admin/products",
+      {
+
+        method: "POST",
+
+        body:
+          JSON.stringify({
+
+            name,
+
+            price,
+
+            stock,
+
+            category,
+
+            gender,
+
+            sizes,
+
+            image,
+
+            description
+
+          })
+
+      }
+    );
+
+
+  const data =
+    await response.json();
+
+
+  if (!response.ok) {
+
+    alert(
+      data.error ||
+      "Could not add product."
+    );
+
+    return;
+
+  }
+
+
+  document
+    .getElementById("productName")
+    .value = "";
+
+  document
+    .getElementById("productPrice")
+    .value = "";
+
+  document
+    .getElementById("productStock")
+    .value = "";
+
+  document
+    .getElementById("productCategory")
+    .value = "";
+
+  document
+    .getElementById("productSizes")
+    .value = "";
+
+  document
+    .getElementById("productImage")
+    .value = "";
+
+  document
+    .getElementById("productDescription")
+    .value = "";
+
+
+  loadProducts();
+
+  alert("Product added successfully.");
+
+}
+
+
+/* DELETE PRODUCT */
+
+async function deleteProduct(id) {
+
+  if (
+    !confirm(
+      "Delete this product?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const response =
+    await api(
+      "/api/admin/products/" + id,
+      {
+        method: "DELETE"
+      }
+    );
+
+
+  if (!response.ok) {
+
+    alert(
+      "Could not delete product."
+    );
+
+    return;
+
+  }
+
+
+  loadProducts();
+
+}
+
+
+/* ORDERS */
+
+async function loadOrders() {
+
+  try {
+
+    const response =
+      await api(
+        "/api/admin/orders"
+      );
+
+
+    if (!response.ok) {
+
+      return;
+
+    }
+
+
+    const orders =
+      await response.json();
+
+
+    const list =
+      document
+        .getElementById("orderList");
+
+
+    if (!orders.length) {
+
+      list.innerHTML =
+        "<p>No orders yet.</p>";
+
+      return;
+
+    }
+
+
+    list.innerHTML =
+      orders
+        .map(order => `
+
+          <div class="order-card">
+
+            <strong>
+              ${escapeHtml(order.id)}
+            </strong>
+
+            <div class="small">
+              ${new Date(order.date).toLocaleString("en-IN")}
+            </div>
+
+            <hr>
+
+            <strong>
+              Customer
+            </strong>
+
+            <div>
+              ${escapeHtml(order.customer.name)}
+            </div>
+
+            <div>
+              ${escapeHtml(order.customer.phone)}
+            </div>
+
+            <div>
+              ${escapeHtml(order.customer.address)}
+            </div>
+
+            <div>
+              ${escapeHtml(order.customer.city)},
+              ${escapeHtml(order.customer.state)}
+              -
+              ${escapeHtml(order.customer.pincode)}
+            </div>
+
+
+            <div class="order-items">
+
+              <strong>
+                Products
+              </strong>
+
+              <br>
+
+              ${
+                order.items
+                  .map(item =>
+                    "• " +
+                    escapeHtml(item.name) +
+                    " × " +
+                    item.quantity +
+                    " | Size: " +
+                    escapeHtml(item.size)
+                  )
+                  .join("<br>")
+              }
+
+            </div>
+
+
+            <strong>
+              Total:
+              ₹${Number(order.total).toLocaleString("en-IN")}
+            </strong>
+
+
+            <br><br>
+
+
+            <label>
+              Order Status
+
+              <select
+                onchange="changeOrderStatus(
+                  '${order.id}',
+                  this.value
+                )"
+              >
+
+                ${
+                  [
+                    "NEW",
+                    "CONFIRMED",
+                    "PACKED",
+                    "SHIPPED",
+                    "DELIVERED",
+                    "CANCELLED"
+                  ]
+                  .map(status => `
+
+                    <option
+                      value="${status}"
+                      ${
+                        order.status === status
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      ${status}
+                    </option>
+
+                  `)
+                  .join("")
+                }
+
+              </select>
+
+            </label>
+
+          </div>
+
+        `)
+        .join("");
+
+
+  } catch(error) {
+
+    document
+      .getElementById("orderList")
+      .textContent =
+        "Could not load orders.";
+
+  }
+
+}
+
+
+/* UPDATE ORDER */
+
+async function changeOrderStatus(
+  id,
+  status
+) {
+
+  const response =
+    await api(
+      "/api/admin/orders/" + id,
+      {
+
+        method: "PATCH",
+
+        body:
+          JSON.stringify({
+            status
+          })
+
+      }
+    );
+
+
+  if (!response.ok) {
+
+    alert(
+      "Could not update order."
+    );
+
+  }
+
+}
+
+
+/* COUPONS */
+
+async function loadCoupons() {
+
+  try {
+
+    const response =
+      await api(
+        "/api/admin/coupons"
+      );
+
+
+    const coupons =
+      await response.json();
+
+
+    const list =
+      document
+        .getElementById("couponList");
+
+
+    if (!coupons.length) {
+
+      list.innerHTML =
+        "<p>No coupons.</p>";
+
+      return;
+
+    }
+
+
+    list.innerHTML =
+      coupons
+        .map(coupon => `
+
+          <div class="coupon-card">
+
+            <strong>
+              ${escapeHtml(coupon.code)}
+            </strong>
+
+            <div class="small">
+
+              ${
+                coupon.type === "percent"
+                  ? coupon.value + "% off"
+                  : "₹" + coupon.value + " off"
+              }
+
+              · Minimum ₹${coupon.minOrder}
+
+            </div>
+
+            <br>
+
+            <button
+              class="danger"
+              onclick="deleteCoupon('${coupon.id}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        `)
+        .join("");
+
+
+  } catch(error) {
+
+    document
+      .getElementById("couponList")
+      .textContent =
+        "Could not load coupons.";
+
+  }
+
+}
+
+
+/* ADD COUPON */
+
+async function addCoupon() {
+
+  const code =
+    document
+      .getElementById("couponCode")
+      .value
+      .trim()
+      .toUpperCase();
+
+
+  const type =
+    document
+      .getElementById("couponType")
+      .value;
+
+
+  const value =
+    Number(
+      document
+        .getElementById("couponValue")
+        .value
+    );
+
+
+  const minOrder =
+    Number(
+      document
+        .getElementById("couponMin")
+        .value
+    ) || 0;
+
+
+  const maxDiscount =
+    Number(
+      document
+        .getElementById("couponMax")
+        .value
+    ) || 0;
+
+
+  if (
+    !code ||
+    !value
+  ) {
+
+    alert(
+      "Enter coupon code and value."
+    );
+
+    return;
+
+  }
+
+
+  const response =
+    await api(
+      "/api/admin/coupons",
+      {
+
+        method: "POST",
+
+        body:
+          JSON.stringify({
+
+            code,
+
+            type,
+
+            value,
+
+            minOrder,
+
+            maxDiscount
+
+          })
+
+      }
+    );
+
+
+  const data =
+    await response.json();
+
+
+  if (!response.ok) {
+
+    alert(
+      data.error ||
+      "Could not add coupon."
+    );
+
+    return;
+
+  }
+
+
+  document
+    .getElementById("couponCode")
+    .value = "";
+
+  document
+    .getElementById("couponValue")
+    .value = "";
+
+  document
+    .getElementById("couponMin")
+    .value = "";
+
+  document
+    .getElementById("couponMax")
+    .value = "";
+
+
+  loadCoupons();
+
+  alert(
+    "Coupon added successfully."
+  );
+
+}
+
+
+/* DELETE COUPON */
+
+async function deleteCoupon(id) {
+
+  if (
+    !confirm(
+      "Delete this coupon?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const response =
+    await api(
+      "/api/admin/coupons/" + id,
+      {
+        method: "DELETE"
+      }
+    );
+
+
+  if (!response.ok) {
+
+    alert(
+      "Could not delete coupon."
+    );
+
+    return;
+
+  }
+
+
+  loadCoupons();
+
+}
+
+
+/* HTML ESCAPE */
+
+function escapeHtml(value) {
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    character => ({
+
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+
+    }[character])
+  );
+
+}
+
+
+/* AUTO LOGIN */
+
+if (adminPassword) {
+
+  api("/api/admin/orders")
+    .then(response => {
+
+      if (response.ok) {
+
+        document
+          .getElementById("loginBox")
+          .classList.add("hidden");
+
+        document
+          .getElementById("adminArea")
+          .classList.remove("hidden");
+
+        loadProducts();
+
+        loadOrders();
+
+        loadCoupons();
+
+      }
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>
