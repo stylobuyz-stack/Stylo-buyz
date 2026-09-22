@@ -1,0 +1,125 @@
+[
+  {
+    "id": "p1",
+    "name": "Better Days Oversized Tee",
+    "price": 1099,
+    "category": "T-Shirts",
+    "gender": "Men",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 20,
+    "image": "",
+    "description": "Relaxed oversized cotton tee."
+  },
+  {
+    "id": "p2",
+    "name": "SB Logo Tee \u2014 Off White",
+    "price": 999,
+    "category": "T-Shirts",
+    "gender": "Women",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 18,
+    "image": "",
+    "description": "Clean everyday logo tee."
+  },
+  {
+    "id": "p3",
+    "name": "Classic Hoodie \u2014 Black",
+    "price": 1699,
+    "category": "Hoodies",
+    "gender": "Men",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 15,
+    "image": "",
+    "description": "Heavyweight relaxed hoodie."
+  },
+  {
+    "id": "p4",
+    "name": "Cargo Pants \u2014 Charcoal",
+    "price": 1499,
+    "category": "Bottoms",
+    "gender": "Men",
+    "sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
+    "stock": 14,
+    "image": "",
+    "description": "Utility cargo fit with multiple pockets."
+  },
+  {
+    "id": "p5",
+    "name": "SB Essentials Hoodie \u2014 Beige",
+    "price": 1699,
+    "category": "Hoodies",
+    "gender": "Women",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 12,
+    "image": "",
+    "description": "Soft everyday premium hoodie."
+  },
+  {
+    "id": "p6",
+    "name": "Minimal Cap \u2014 Black",
+    "price": 499,
+    "category": "Accessories",
+    "gender": "Unisex",
+    "sizes": [
+      "Free Size"
+    ],
+    "stock": 25,
+    "image": "",
+    "description": "Minimal embroidered everyday cap."
+  },
+  {
+    "id": "p7",
+    "name": "SB Logo Tote Bag",
+    "price": 599,
+    "category": "Accessories",
+    "gender": "Unisex",
+    "sizes": [
+      "Free Size"
+    ],
+    "stock": 22,
+    "image": "",
+    "description": "Reusable canvas tote with SB branding."
+  },
+  {
+    "id": "p8",
+    "name": "Street Cargo \u2014 Black",
+    "price": 1599,
+    "category": "Bottoms",
+    "gender": "Women",
+    "sizes": [
+      "28",
+      "30",
+      "32",
+      "34"
+    ],
+    "stock": 10,
+    "image": "",
+    "description": "Relaxed streetwear cargo pants."
+  }
+]
