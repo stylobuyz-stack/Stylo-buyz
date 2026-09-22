@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>STYLO BUYZ | Online Fashion Store</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f7f7;
+      color: #111;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header {
+      max-width: 1200px;
+      margin: auto;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .cart-button {
+      background: white;
+      color: #111;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 55px 25px;
+      border-radius: 18px;
+      background: #111;
+      color: white;
+    }
+
+    .hero h1 {
+      font-size: 44px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #ddd;
+      font-size: 17px;
+    }
+
+    .controls {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .controls input,
+    .controls select {
+      padding: 13px;
+      border: 1px solid #ccc;
+      border-radius: 9px;
+      background: white;
+    }
+
+    .controls input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .products {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 20px 50px;
+
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    }
+
+    .product-image {
+      height: 270px;
+      background: #e8e8e8;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 42px;
+      font-weight: bold;
+      color: #aaa;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product-name {
+      font-weight: bold;
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    .product-category {
+      color: #777;
+      font-size: 13px;
+    }
+
+    .price {
+      font-size: 19px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .add-button {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      background: #111;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px;
+      color: #777;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 500;
+
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .cart {
+      background: white;
+      width: min(650px, 100%);
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: 20px 20px 0 0;
+      padding: 22px;
+    }
+
+    .close {
+      float: right;
+      border: none;
+      background: #eee;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .cart-item {
+      padding: 13px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .quantity button {
+      border: 1px solid #ccc;
+      background: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .summary {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      line-height: 28px;
+    }
+
+    .coupon {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .coupon input {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .coupon button {
+      padding: 11px 15px;
+      border: none;
+      background: #111;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .checkout {
+      margin-top: 20px;
+    }
+
+    .checkout label {
+      display: block;
+      font-weight: bold;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .checkout input,
+    .checkout textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .checkout textarea {
+      min-height: 80px;
+    }
+
+    .order-button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 14px;
+      border: none;
+      background: #20b45b;
+      color: white;
+      border-radius: 9px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    @media(max-width: 900px) {
+      .products {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width: 500px) {
+      .hero {
+        margin: 10px;
+        padding: 40px 20px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .products {
+        padding: 0 10px 40px;
+        gap: 10px;
+      }
+
+      .product-image {
+        height: 190px;
+      }
+
+      .product-info {
+        padding: 10px;
+      }
+
+      .product-name {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="header">
+    <div class="logo">STYLO BUYZ</div>
+
+    <button class="cart-button" onclick="openCart()">
+      🛒 Cart (<span id="cartCount">0</span>)
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Wear Your Style.</h1>
+  <p>Streetwear, essentials & accessories.</p>
+</section>
+
+<div class="controls">
+
+  <input
+    id="search"
+    type="search"
+    placeholder="Search products..."
+    oninput="showProducts()"
+  >
+
+  <select id="category" onchange="showProducts()">
+    <option value="">All Categories</option>
+  </select>
+
+</div>
+
+<main id="products" class="products">
+  <div class="empty">
+    Loading products...
+  </div>
+</main>
+
+
+<!-- CART -->
+
+<div id="cartModal" class="modal">
+
+  <div class="cart">
+
+    <button class="close" onclick="closeCart()">×</button>
+
+    <h2>Your Cart</h2>
+
+    <div id="cartItems"></div>
+
+    <div class="summary">
+
+      <div>
+        Subtotal: ₹<span id="subtotal">0</span>
+      </div>
+
+      <div>
+        Discount: ₹<span id="discount">0</span>
+      </div>
+
+      <strong>
+        Total: ₹<span id="total">0</span>
+      </strong>
+
+    </div>
+
+
+    <div class="coupon">
+
+      <input
+        id="couponCode"
+        placeholder="Coupon code"
+      >
+
+      <button onclick="applyCoupon()">
+        Apply
+      </button>
+
+    </div>
+
+    <div id="couponMessage" class="note"></div>
+
+
+    <div class="checkout">
+
+      <h3>Delivery Details</h3>
+
+      <label>
+        Full Name *
+        <input id="customerName">
+      </label>
+
+      <label>
+        Mobile Number *
+        <input
+          id="customerPhone"
+          inputmode="numeric"
+          maxlength="10"
+        >
+      </label>
+
+      <label>
+        Email
+        <input id="customerEmail" type="email">
+      </label>
+
+      <label>
+        Full Address *
+        <textarea id="customerAddress"></textarea>
+      </label>
+
+      <label>
+        City *
+        <input id="customerCity">
+      </label>
+
+      <label>
+        State *
+        <input id="customerState">
+      </label>
+
+      <label>
+        Pincode *
+        <input
+          id="customerPincode"
+          inputmode="numeric"
+          maxlength="6"
+        >
+      </label>
+
+      <div class="note">
+        Your order will be sent to STYLO BUYZ on WhatsApp.
+      </div>
+
+      <button
+        class="order-button"
+        onclick="placeOrder()"
+      >
+        📲 Order on WhatsApp
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let products = [];
+let cart = [];
+
+let currentDiscount = 0;
+let currentCoupon = "";
+
+const WHATSAPP_NUMBER = "919220105150";
+
+
+/* LOAD PRODUCTS */
+
+async function loadProducts() {
+
+  try {
+
+    const response =
+      await fetch("/api/products");
+
+    if (!response.ok) {
+      throw new Error("Server error");
+    }
+
+    products =
+      await response.json();
+
+    if (!Array.isArray(products)) {
+      throw new Error("Invalid products");
+    }
+
+    createCategories();
+
+    showProducts();
+
+  } catch(error) {
+
+    console.error(error);
+
+    document.getElementById("products").innerHTML =
+      '<div class="empty">Unable to load products. Please refresh the page.</div>';
+
+  }
+
+}
+
+
+/* CATEGORIES */
+
+function createCategories() {
+
+  const category =
+    document.getElementById("category");
+
+  const categories =
+    [...new Set(
+      products
+        .map(product => product.category)
+        .filter(Boolean)
+    )];
+
+  category.innerHTML =
+    '<option value="">All Categories</option>';
+
+  categories.forEach(name => {
+
+    const option =
+      document.createElement("option");
+
+    option.value = name;
+    option.textContent = name;
+
+    category.appendChild(option);
+
+  });
+
+}
+
+
+/* DISPLAY PRODUCTS */
+
+function showProducts() {
+
+  const container =
+    document.getElementById("products");
+
+  const search =
+    document
+      .getElementById("search")
+      .value
+      .toLowerCase();
+
+  const category =
+    document
+      .getElementById("category")
+      .value;
+
+
+  const filtered =
+    products.filter(product => {
+
+      const matchesSearch =
+        !search ||
+        product.name
+          .toLowerCase()
+          .includes(search);
+
+      const matchesCategory =
+        !category ||
+        product.category === category;
+
+      return matchesSearch &&
+             matchesCategory;
+
+    });
+
+
+  if (filtered.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">No products found.</div>';
+
+    return;
+  }
+
+
+  container.innerHTML =
+    filtered
+      .map(product => {
+
+        const image =
+          product.image
+            ? `<img src="${escapeHtml(product.image)}"
+                 alt="${escapeHtml(product.name)}"
+                 onerror="this.style.display='none';">`
+            : "SB";
+
+        return `
+
+          <div class="product">
+
+            <div class="product-image">
+              ${image}
+            </div>
+
+            <div class="product-info">
+
+              <div class="product-name">
+                ${escapeHtml(product.name)}
+              </div>
+
+              <div class="product-category">
+                ${escapeHtml(product.category)}
+              </div>
+
+              <div class="price">
+                ₹${Number(product.price).toLocaleString("en-IN")}
+              </div>
+
+              <button
+                class="add-button"
+                onclick="addToCart('${product.id}')"
+              >
+                Add to Cart
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      })
+      .join("");
+
+}
+
+
+/* ADD TO CART */
+
+function addToCart(id) {
+
+  const product =
+    products.find(
+      product => product.id === id
+    );
+
+  if (!product) return;
+
+
+  const size =
+    product.sizes &&
+    product.sizes.length
+      ? product.sizes[0]
+      : "Free Size";
+
+
+  const existing =
+    cart.find(
+      item =>
+        item.id === id &&
+        item.size === size
+    );
+
+
+  if (existing) {
+
+    if (
+      existing.quantity <
+      Number(product.stock)
+    ) {
+
+      existing.quantity++;
+
+    } else {
+
+      alert("Maximum available stock reached.");
+
+    }
+
+  } else {
+
+    cart.push({
+
+      id: id,
+
+      size: size,
+
+      quantity: 1
+
+    });
+
+  }
+
+
+  updateCart();
+
+  openCart();
+
+}
+
+
+/* CART */
+
+function updateCart() {
+
+  document.getElementById("cartCount")
+    .textContent =
+      cart.reduce(
+        (sum, item) =>
+          sum + item.quantity,
+        0
+      );
+
+  renderCart();
+
+}
+
+
+function renderCart() {
+
+  const container =
+    document.getElementById("cartItems");
+
+
+  if (cart.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">Your cart is empty.</div>';
+
+    calculateTotal();
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    cart
+      .map((item, index) => {
+
+        const product =
+          products.find(
+            product =>
+              product.id === item.id
+          );
+
+        if (!product) return "";
+
+
+        return `
+
+          <div class="cart-item">
+
+            <strong>
+              ${escapeHtml(product.name)}
+            </strong>
+
+            <div class="note">
+              Size: ${escapeHtml(item.size)}
+              · ₹${Number(product.price).toLocaleString("en-IN")}
+            </div>
+
+            <div class="quantity">
+
+              <button onclick="changeQuantity(${index}, -1)">
+                −
+              </button>
+
+              <span>
+                ${item.quantity}
+              </span>
+
+              <button onclick="changeQuantity(${index}, 1)">
+                +
+              </button>
+
+              <button onclick="removeFromCart(${index})">
+                Remove
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      })
+      .join("");
+
+
+  calculateTotal();
+
+}
+
+
+function changeQuantity(index, change) {
+
+  const item = cart[index];
+
+  const product =
+    products.find(
+      product =>
+        product.id === item.id
+    );
+
+  item.quantity += change;
+
+
+  if (
+    product &&
+    item.quantity >
+    Number(product.stock)
+  ) {
+
+    item.quantity =
+      Number(product.stock);
+
+  }
+
+
+  if (item.quantity <= 0) {
+
+    cart.splice(index, 1);
+
+  }
+
+
+  updateCart();
+
+}
+
+
+function removeFromCart(index) {
+
+  cart.splice(index, 1);
+
+  updateCart();
+
+}
+
+
+/* TOTAL */
+
+function calculateTotal() {
+
+  let subtotalValue = 0;
+
+
+  cart.forEach(item => {
+
+    const product =
+      products.find(
+        product =>
+          product.id === item.id
+      );
+
+    if (product) {
+
+      subtotalValue +=
+        Number(product.price) *
+        item.quantity;
+
+    }
+
+  });
+
+
+  if (
+    currentDiscount >
+    subtotalValue
+  ) {
+
+    currentDiscount =
+      subtotalValue;
+
+  }
+
+
+  const totalValue =
+    subtotalValue -
+    currentDiscount;
+
+
+  document.getElementById("subtotal")
+    .textContent =
+      subtotalValue.toLocaleString("en-IN");
+
+  document.getElementById("discount")
+    .textContent =
+      currentDiscount.toLocaleString("en-IN");
+
+  document.getElementById("total")
+    .textContent =
+      totalValue.toLocaleString("en-IN");
+
+
+  return {
+
+    subtotal: subtotalValue,
+
+    discount: currentDiscount,
+
+    total: totalValue
+
+  };
+
+}
+
+
+/* COUPON */
+
+async function applyCoupon() {
+
+  const code =
+    document
+      .getElementById("couponCode")
+      .value
+      .trim()
+      .toUpperCase();
+
+
+  if (!code) {
+
+    alert("Enter a coupon code.");
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch("/api/coupons");
+
+    const coupons =
+      await response.json();
+
+
+    const coupon =
+      coupons.find(
+        item =>
+          item.code === code &&
+          item.active !== false
+      );
+
+
+    const totals =
+      calculateTotal();
+
+
+    if (!coupon) {
+
+      currentDiscount = 0;
+      currentCoupon = "";
+
+      document.getElementById("couponMessage")
+        .textContent =
+          "Invalid coupon.";
+
+      calculateTotal();
+
+      return;
+
+    }
+
+
+    if (
+      totals.subtotal <
+      Number(coupon.minOrder || 0)
+    ) {
+
+      currentDiscount = 0;
+      currentCoupon = "";
+
+      document.getElementById("couponMessage")
+        .textContent =
+          "Minimum order ₹" +
+          Number(coupon.minOrder)
+            .toLocaleString("en-IN") +
+          " required.";
+
+      calculateTotal();
+
+      return;
+
+    }
+
+
+    if (coupon.type === "percent") {
+
+      currentDiscount =
+        totals.subtotal *
+        Number(coupon.value) /
+        100;
+
+
+      if (
+        Number(coupon.maxDiscount) > 0 &&
+        currentDiscount >
+        Number(coupon.maxDiscount)
+      ) {
+
+        currentDiscount =
+          Number(coupon.maxDiscount);
+
+      }
+
+    } else {
+
+      currentDiscount =
+        Number(coupon.value);
+
+    }
+
+
+    currentCoupon =
+      coupon.code;
+
+
+    document.getElementById("couponMessage")
+      .textContent =
+        coupon.code +
+        " applied successfully.";
+
+
+    calculateTotal();
+
+  } catch(error) {
+
+    alert("Could not apply coupon.");
+
+  }
+
+}
+
+
+/* PLACE ORDER */
+
+async function placeOrder() {
+
+  if (cart.length === 0) {
+
+    alert("Your cart is empty.");
+
+    return;
+
+  }
+
+
+  const name =
+    document
+      .getElementById("customerName")
+      .value
+      .trim();
+
+  const phone =
+    document
+      .getElementById("customerPhone")
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById("customerEmail")
+      .value
+      .trim();
+
+  const address =
+    document
+      .getElementById("customerAddress")
+      .value
+      .trim();
+
+  const city =
+    document
+      .getElementById("customerCity")
+      .value
+      .trim();
+
+  const state =
+    document
+      .getElementById("customerState")
+      .value
+      .trim();
+
+  const pincode =
+    document
+      .getElementById("customerPincode")
+      .value
+      .trim();
+
+
+  if (
+    !name ||
+    !/^[6-9][0-9]{9}$/.test(phone) ||
+    !address ||
+    !city ||
+    !state ||
+    !/^[0-9]{6}$/.test(pincode)
+  ) {
+
+    alert(
+      "Please enter valid customer details."
+    );
+
+    return;
+
+  }
+
+
+  const totals =
+    calculateTotal();
+
+
+  const items =
+    cart.map(item => {
+
+      return {
+
+        id: item.id,
+
+        size: item.size,
+
+        quantity: item.quantity
+
+      };
+
+    });
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/orders",
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              customer: {
+
+                name,
+                phone,
+                email,
+                address,
+                city,
+                state,
+                pincode
+
+              },
+
+              items,
+
+              subtotal:
+                totals.subtotal,
+
+              discount:
+                totals.discount,
+
+              coupon:
+                currentCoupon,
+
+              total:
+                totals.total
+
+            })
+
+          }
+
+        );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Order could not be created."
+      );
+
+    }
+
+
+    let message =
+      "*STYLO BUYZ — NEW ORDER*";
+
+
+    message +=
+      "\n\nOrder ID: " +
+      data.order.id;
+
+
+    message +=
+      "\n\n*CUSTOMER DETAILS*";
+
+    message +=
+      "\nName: " + name;
+
+    message +=
+      "\nMobile: " + phone;
+
+    message +=
+      "\nEmail: " +
+      (email || "-");
+
+    message +=
+      "\nAddress: " + address;
+
+    message +=
+      "\nCity: " + city;
+
+    message +=
+      "\nState: " + state;
+
+    message +=
+      "\nPincode: " + pincode;
+
+
+    message +=
+      "\n\n*PRODUCTS*";
+
+
+    data.order.items.forEach(item => {
+
+      message +=
+        "\n• " +
+        item.name +
+        " | Size: " +
+        item.size +
+        " | Qty: " +
+        item.quantity +
+        " | ₹" +
+        (
+          Number(item.price) *
+          item.quantity
+        ).toLocaleString("en-IN");
+
+    });
+
+
+    message +=
+      "\n\nSubtotal: ₹" +
+      totals.subtotal.toLocaleString("en-IN");
+
+    message +=
+      "\nDiscount: ₹" +
+      totals.discount.toLocaleString("en-IN");
+
+    message +=
+      "\nTotal: ₹" +
+      totals.total.toLocaleString("en-IN");
+
+    message +=
+      "\nCoupon: " +
+      (currentCoupon || "None");
+
+    message +=
+      "\n\nPayment: Cash on Delivery / WhatsApp";
+
+
+    const whatsappURL =
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(message);
+
+
+    window.open(
+      whatsappURL,
+      "_blank"
+    );
+
+
+    cart = [];
+
+    currentDiscount = 0;
+
+    currentCoupon = "";
+
+    updateCart();
+
+    closeCart();
+
+
+    alert(
+      "Order created successfully. WhatsApp will open now. Tap Send to send the order."
+    );
+
+
+  } catch(error) {
+
+    alert(error.message);
+
+  }
+
+}
+
+
+/* MODAL */
+
+function openCart() {
+
+  document
+    .getElementById("cartModal")
+    .classList.add("active");
+
+}
+
+
+function closeCart() {
+
+  document
+    .getElementById("cartModal")
+    .classList.remove("active");
+
+}
+
+
+/* SECURITY */
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      function(character) {
+
+        return {
+
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+
+        }[character];
+
+      }
+    );
+
+}
+
+
+/* START */
+
+loadProducts();
+
+updateCart();
+
+</script>
+
+</body>
+</html>
