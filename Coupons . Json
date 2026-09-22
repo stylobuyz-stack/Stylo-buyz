@@ -1,0 +1,20 @@
+[
+  {
+    "id": "c1",
+    "code": "STYLO10",
+    "type": "percent",
+    "value": 10,
+    "minOrder": 999,
+    "maxDiscount": 300,
+    "active": true
+  },
+  {
+    "id": "c2",
+    "code": "WELCOME50",
+    "type": "flat",
+    "value": 50,
+    "minOrder": 499,
+    "maxDiscount": 0,
+    "active": true
+  }
+]
